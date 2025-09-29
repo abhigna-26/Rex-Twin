@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>ReX Twin — Authentication</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body { background: linear-gradient(135deg,#1E90FF 0%, #20C997 100%); }
+    .card { background: #ffffff; box-shadow: 0 4px 20px rgba(0,0,0,0.05); }
+  </style>
+</head>
+<body class="min-h-screen flex items-center justify-center text-slate-900 p-4">
+
+  <main class="w-full max-w-xl md:max-w-4xl grid grid-cols-1 md:grid-cols-2 gap-6 px-4 md:px-6 py-8">
+
+    <!-- Left: Branding + Illustration -->
+    <section class="p-6 card rounded-2xl flex flex-col gap-4">
+      <div class="flex items-center gap-3">
+        <div class="w-12 h-12 rounded-xl bg-gradient-to-r from-blue-500 to-green-400 flex items-center justify-center text-white font-bold">R</div>
+        <div>
+          <h1 class="text-xl font-bold text-slate-900">ReX Twin</h1>
+          <p class="text-sm text-slate-600">Waste Exchange • Digital Twin</p>
+        </div>
+      </div>
+
+      <div class="mt-3 flex-1">
+        <img src="https://images.unsplash.com/photo-1509395176047-4a66953fd231?q=80&w=1200&auto=format&fit=crop&ixlib=rb-4.0.3&s=dummy" alt="sustainability" class="w-full h-52 md:h-64 object-cover rounded-lg" />
+      </div>
+
+      <div class="text-sm text-slate-600">
+        <p>Choose a role and sign in with email or OTP to continue.</p>
+      </div>
+    </section>
+
+    <!-- Right: Auth Card -->
+    <section class="p-6 card rounded-2xl">
+      <h2 class="text-lg font-semibold mb-2 text-slate-900">Welcome back</h2>
+      <p class="text-sm text-slate-600 mb-4">Sign in to continue to the ReX Twin dashboard.</p>
+
+      <div class="space-y-3">
+        <label class="block text-xs text-slate-700">Role</label>
+        <select id="role" class="w-full p-2 rounded-md border border-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-400">
+          <option>SME / Industry</option>
+          <option>Government Official</option>
+          <option>City Planner</option>
+          <option>NGO</option>
+        </select>
+
+        <label class="block text-xs text-slate-700">Email or Phone</label>
+        <input id="identity" class="w-full p-2 rounded-md border border-slate-300 focus:outline-none focus:ring-2 focus:ring-green-400" placeholder="you@example.com or +91 98765 43210" />
+
+        <div class="flex flex-col md:flex-row gap-2">
+          <button id="useEmail" class="w-full md:flex-1 px-3 py-2 rounded-md bg-gradient-to-r from-blue-500 to-green-400 text-white font-semibold">Continue with Email</button>
+          <button id="useOtp" class="w-full md:flex-1 px-3 py-2 rounded-md bg-slate-200 text-slate-800 font-semibold">Phone OTP</button>
+        </div>
+
+        <div id="emailSection" class="hidden space-y-2">
+          <label class="text-xs text-slate-700">Password</label>
+          <input id="password" type="password" class="w-full p-2 rounded-md border border-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-400" placeholder="Enter a password" />
+          <button id="loginEmail" class="w-full px-3 py-2 rounded-md bg-blue-500 text-white font-semibold">Login</button>
+        </div>
+
+        <div id="otpSection" class="hidden space-y-2">
+          <label class="text-xs text-slate-700">Enter OTP</label>
+          <input id="otpInput" class="w-full p-2 rounded-md border border-slate-300 focus:outline-none focus:ring-2 focus:ring-green-400" placeholder="6-digit code" />
+          <div class="flex flex-col md:flex-row gap-2">
+            <button id="sendOtp" class="w-full md:flex-1 px-3 py-2 rounded-md bg-slate-200 text-slate-800">Send OTP</button>
+            <button id="verifyOtp" class="w-full md:flex-1 px-3 py-2 rounded-md bg-green-500 text-white font-semibold">Verify</button>
+          </div>
+        </div>
+
+        <div class="text-sm text-slate-500">Or continue as a guest</div>
+        <div class="flex flex-col md:flex-row gap-2 mt-2">
+          <button id="guestBtn" class="w-full md:flex-1 px-3 py-2 rounded-md bg-slate-200 text-slate-800">Guest Access</button>
+        </div>
+
+        <div class="mt-4 text-xs text-slate-400">This is a login flow.</div>
+      </div>
+    </section>
+
+  </main>
+
+  <script>
+    const el = id => document.getElementById(id);
+
+    el('useEmail').addEventListener('click', ()=>{
+      el('emailSection').classList.remove('hidden'); el('otpSection').classList.add('hidden');
+    });
+    el('useOtp').addEventListener('click', ()=>{
+      el('otpSection').classList.remove('hidden'); el('emailSection').classList.add('hidden');
+    });
+
+    function doLogin(role){
+      sessionStorage.setItem('rex_role', role);
+      document.body.style.transition = 'opacity 0.45s'; document.body.style.opacity = '0.4';
+      setTimeout(()=> { window.location.href = 'dashboard.html'; }, 650);
+    }
+
+    el('loginEmail').addEventListener('click', ()=>{ const role = el('role').value; doLogin(role); });
+    el('verifyOtp').addEventListener('click', ()=>{ const role = el('role').value; doLogin(role); });
+    el('guestBtn').addEventListener('click', ()=>{ sessionStorage.setItem('rex_role', 'Guest'); window.location.href='dashboard.html'; });
+
+    el('sendOtp').addEventListener('click', ()=>{ alert('OTP sent (mock)'); });
+  </script>
+</body>
+</html>

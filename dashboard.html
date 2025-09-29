@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>ReX Twin — Dashboard</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body { background: #f9fafb; }
+    .gradient-btn { background: linear-gradient(135deg,#1E90FF 0%, #20C997 100%); }
+    .card { background: #ffffff; box-shadow: 0 4px 20px rgba(0,0,0,0.05); }
+    .fade-in { animation: fadeIn 0.6s ease-in-out; }
+    @keyframes fadeIn { from {opacity:0; transform: translateY(10px);} to {opacity:1; transform: translateY(0);} }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col text-slate-900">
+
+  <!-- Navbar -->
+  <header class="w-full px-6 py-4 flex items-center justify-between bg-white shadow">
+    <div class="flex items-center gap-2">
+      <div class="w-10 h-10 rounded-lg gradient-btn flex items-center justify-center text-white font-bold">R</div>
+      <span class="font-semibold text-lg">ReX Twin</span>
+    </div>
+    <nav class="hidden md:flex gap-6 text-slate-700 font-medium">
+      <a href="dashboard.html" class="hover:text-blue-500">Dashboard</a>
+      <a href="waste.html" class="hover:text-blue-500">ReX Mode</a>
+      <a href="twin.html" class="hover:text-blue-500">Twin Mode</a>
+      <a href="reports.html" class="hover:text-blue-500">Reports</a>
+    </nav>
+    <div class="flex items-center gap-3">
+      <span id="roleDisplay" class="text-sm text-slate-600"></span>
+      <button onclick="logout()" class="px-3 py-1 rounded-md bg-slate-200 text-slate-800 text-sm">Logout</button>
+    </div>
+  </header>
+
+  <!-- Content -->
+  <main class="flex-1 px-6 py-8 fade-in">
+
+    <!-- Quick Stats -->
+    <section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+      <div class="card rounded-xl p-5 flex flex-col gap-2">
+        <h3 class="text-sm text-slate-600">Waste Exchanged (This Month)</h3>
+        <p id="wasteStat" class="text-2xl font-bold text-blue-600">0 tonnes</p>
+      </div>
+      <div class="card rounded-xl p-5 flex flex-col gap-2">
+        <h3 class="text-sm text-slate-600">Traffic Congestion</h3>
+        <p id="trafficStat" class="text-2xl font-bold text-green-600">-- %</p>
+      </div>
+      <div class="card rounded-xl p-5 flex flex-col gap-2">
+        <h3 class="text-sm text-slate-600">CO₂ Emissions Baseline</h3>
+        <p id="co2Stat" class="text-2xl font-bold text-red-500">-- MT</p>
+      </div>
+      <div class="card rounded-xl p-5 flex flex-col gap-2">
+        <h3 class="text-sm text-slate-600">Policy Compliance</h3>
+        <p id="policyStat" class="text-2xl font-bold text-emerald-500">-- %</p>
+      </div>
+    </section>
+
+    <!-- Big CTAs -->
+    <section class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
+      <button onclick="goToWaste()" class="gradient-btn rounded-xl text-white font-bold text-lg py-8 shadow hover:scale-105 transition-transform">♻️ List Waste (ReX Mode)</button>
+      <button onclick="goToTwin()" class="gradient-btn rounded-xl text-white font-bold text-lg py-8 shadow hover:scale-105 transition-transform">🗺️ Simulate Project (Twin Mode)</button>
+    </section>
+
+    <!-- Charts (Demo placeholders) -->
+    <section class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div class="card rounded-xl p-6">
+        <h3 class="font-semibold mb-4">Traffic & Emissions Trend</h3>
+        <canvas id="trafficChart" class="w-full h-64"></canvas>
+      </div>
+      <div class="card rounded-xl p-6">
+        <h3 class="font-semibold mb-4">Waste Type Distribution</h3>
+        <canvas id="wasteChart" class="w-full h-64"></canvas>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-white shadow px-6 py-4 text-center text-sm text-slate-500">
+    © 2025 ReX Twin. All rights reserved.
+  </footer>
+
+  <!-- Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script>
+    // Role display
+    const role = sessionStorage.getItem('rex_role') || 'Guest';
+    document.getElementById('roleDisplay').innerText = `Role: ${role}`;
+
+    function logout(){ sessionStorage.clear(); window.location.href='auth.html'; }
+    function goToWaste(){ window.location.href='waste.html'; }
+    function goToTwin(){ window.location.href='twin.html'; }
+
+    // Mock stats (replace with real API calls later)
+    document.getElementById('wasteStat').innerText = '12.5 tonnes';
+    document.getElementById('trafficStat').innerText = '68%';
+    document.getElementById('co2Stat').innerText = '940 MT';
+    document.getElementById('policyStat').innerText = '91%';
+
+    // Charts
+    const trafficCtx = document.getElementById('trafficChart').getContext('2d');
+    new Chart(trafficCtx, {
+      type: 'line',
+      data: {
+        labels: ['Jan','Feb','Mar','Apr','May','Jun'],
+        datasets: [
+          {label:'Traffic %', data:[70,65,60,68,66,64], borderColor:'#1E90FF', fill:false},
+          {label:'CO₂ MT', data:[950,930,910,940,920,915], borderColor:'#20C997', fill:false}
+        ]
+      }
+    });
+
+    const wasteCtx = document.getElementById('wasteChart').getContext('2d');
+    new Chart(wasteCtx, {
+      type: 'pie',
+      data: {
+        labels: ['Fly Ash','Scrap','E-Waste','Plastic','Other'],
+        datasets: [{ data:[35,25,15,15,10], backgroundColor:['#1E90FF','#20C997','#FF6B6B','#FFC107','#6C757D'] }]
+      }
+    });
+  </script>
+</body>
+</html>

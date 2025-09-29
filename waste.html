@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>ReX Twin — Waste Exchange</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body { background: #f9fafb; }
+    .gradient-btn { background: linear-gradient(135deg,#1E90FF 0%, #20C997 100%); }
+    .card { background: #ffffff; box-shadow: 0 4px 20px rgba(0,0,0,0.05); }
+    .fade-in { animation: fadeIn 0.6s ease-in-out; }
+    @keyframes fadeIn { from {opacity:0; transform: translateY(10px);} to {opacity:1; transform: translateY(0);} }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col text-slate-900">
+
+  <!-- Navbar -->
+  <header class="w-full px-6 py-4 flex items-center justify-between bg-white shadow">
+    <div class="flex items-center gap-2">
+      <div class="w-10 h-10 rounded-lg gradient-btn flex items-center justify-center text-white font-bold">R</div>
+      <span class="font-semibold text-lg">ReX Twin</span>
+    </div>
+    <nav class="hidden md:flex gap-6 text-slate-700 font-medium">
+      <a href="dashboard.html" class="hover:text-blue-500">Dashboard</a>
+      <a href="waste.html" class="hover:text-blue-500">ReX Mode</a>
+      <a href="twin.html" class="hover:text-blue-500">Twin Mode</a>
+      <a href="reports.html" class="hover:text-blue-500">Reports</a>
+    </nav>
+    <div class="flex items-center gap-3">
+      <span id="roleDisplay" class="text-sm text-slate-600"></span>
+      <button onclick="logout()" class="px-3 py-1 rounded-md bg-slate-200 text-slate-800 text-sm">Logout</button>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="flex-1 px-6 py-8 fade-in">
+
+    <!-- Waste Listing Form -->
+    <section class="card rounded-xl p-6 mb-8">
+      <h2 class="text-lg font-semibold mb-4">List New Waste</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <select id="wasteType" class="p-2 rounded-md border border-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-400">
+          <option>Fly Ash</option>
+          <option>Scrap</option>
+          <option>E-Waste</option>
+          <option>Plastic</option>
+          <option>Other</option>
+        </select>
+        <input id="quantity" type="number" placeholder="Quantity (kg)" class="p-2 rounded-md border border-slate-300 focus:outline-none focus:ring-2 focus:ring-green-400" />
+        <input id="location" type="text" placeholder="Location" class="p-2 rounded-md border border-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-400" />
+        <input id="price" type="number" placeholder="Preferred Price (₹/kg)" class="p-2 rounded-md border border-slate-300 focus:outline-none focus:ring-2 focus:ring-green-400" />
+      </div>
+      <button onclick="addWaste()" class="mt-4 px-4 py-2 rounded-xl gradient-btn text-white font-semibold hover:scale-105 transition-transform">List Waste</button>
+    </section>
+
+    <!-- Marketplace -->
+    <section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <!-- Example Card -->
+      <div class="card rounded-xl p-4">
+        <h3 class="font-semibold">Fly Ash</h3>
+        <p>Quantity: 500 kg</p>
+        <p>Location: Pune</p>
+        <p>Price: ₹15/kg</p>
+        <button class="mt-2 px-3 py-1 rounded-md gradient-btn text-white font-semibold hover:scale-105 transition-transform">Contact Seller</button>
+      </div>
+      <div class="card rounded-xl p-4">
+        <h3 class="font-semibold">E-Waste</h3>
+        <p>Quantity: 200 kg</p>
+        <p>Location: Mumbai</p>
+        <p>Price: ₹50/kg</p>
+        <button class="mt-2 px-3 py-1 rounded-md gradient-btn text-white font-semibold hover:scale-105 transition-transform">Contact Seller</button>
+      </div>
+      <!-- More cards dynamically added -->
+      <div id="marketplace"></div>
+    </section>
+
+  </main>
+
+  <footer class="bg-white shadow px-6 py-4 text-center text-sm text-slate-500">
+    © 2025 ReX Twin. All rights reserved.
+  </footer>
+
+  <script>
+    const role = sessionStorage.getItem('rex_role') || 'Guest';
+    document.getElementById('roleDisplay').innerText = `Role: ${role}`;
+
+    function logout(){ sessionStorage.clear(); window.location.href='auth.html'; }
+
+    // Simple mock marketplace
+    const marketplaceEl = document.getElementById('marketplace');
+    const wasteItems = [
+      {type:'Scrap', qty:300, loc:'Delhi', price:20},
+      {type:'Plastic', qty:150, loc:'Bangalore', price:10}
+    ];
+
+    wasteItems.forEach(item=>{
+      const card = document.createElement('div');
+      card.className = 'card rounded-xl p-4';
+      card.innerHTML = `<h3 class='font-semibold'>${item.type}</h3><p>Quantity: ${item.qty} kg</p><p>Location: ${item.loc}</p><p>Price: ₹${item.price}/kg</p><button class='mt-2 px-3 py-1 rounded-md gradient-btn text-white font-semibold hover:scale-105 transition-transform'>Contact Seller</button>`;
+      marketplaceEl.appendChild(card);
+    });
+
+    function addWaste(){
+      const type = document.getElementById('wasteType').value;
+      const qty = document.getElementById('quantity').value;
+      const loc = document.getElementById('location').value;
+      const price = document.getElementById('price').value;
+      if(type && qty && loc && price){
+        const card = document.createElement('div');
+        card.className = 'card rounded-xl p-4';
+        card.innerHTML = `<h3 class='font-semibold'>${type}</h3><p>Quantity: ${qty} kg</p><p>Location: ${loc}</p><p>Price: ₹${price}/kg</p><button class='mt-2 px-3 py-1 rounded-md gradient-btn text-white font-semibold hover:scale-105 transition-transform'>Contact Seller</button>`;
+        marketplaceEl.appendChild(card);
+        alert('Waste listed successfully');
+      } else alert('Please fill all fields');
+    }
+  </script>
+</body>
+</html>
